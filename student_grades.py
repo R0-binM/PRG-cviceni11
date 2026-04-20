@@ -5,7 +5,9 @@ class Students:
     def __init__(self, scores):
         self.scores = scores
 
-        # self._sorted_scores = None  # zatím nic neseřazené
+        # Nový atribut pro cache (podtržítko značí, že je to vnitřní proměnná)
+        self._sorted_scores = None  # zatím nic neseřazené
+
 
     def get_by_index(self, index):
         return self.scores[index]
@@ -45,17 +47,38 @@ class Students:
 
         return found_indices
 
-    # --- ÚKOL: Seřazení výsledků ---
     def get_sorted(self):
+        # Zde potřebujeme vzestupné řazení pro standardní binární hledání
+        return sorted(self.scores)
 
-        return sorted(self.scores, reverse=True)
+    # --- ÚKOL: Seřazení výsledků ---
+    # def get_sorted(self):
+    #   return sorted(self.scores, reverse=True)
 
-# def find_sorted(self, score):
-#
-#     if self._sorted_scores is None:
-#
-#         self._sorted_scores = self.get_sorted()
 
+    # --- BONUSOVÝ ÚKOL ---
+    def find_sorted(self, score):
+        # 1. Kontrola cache: Pokud je prázdná, seřadíme a zapamatujeme si to
+        if self._sorted_scores is None:
+            print("sorting_")  # Tento text vyskočí jen při prvním zavolání!
+            self._sorted_scores = self.get_sorted()
+
+        # 2. Binární vyhledávání (používáme už naši cache: self._sorted_scores)
+        left = 0
+        right = len(self._sorted_scores) - 1
+
+        while left <= right:
+            mid = (left + right) // 2
+
+            if self._sorted_scores[mid] == score:
+                return mid  # Našli jsme, vracíme index v seřazeném poli
+            elif self._sorted_scores[mid] < score:
+                left = mid + 1  # Jdeme doprava
+            else:
+                right = mid - 1  # Jdeme doleva
+
+        # Pokud cyklus skončí a nic nenajde
+        return None
 
 
 
@@ -93,7 +116,16 @@ def main():
     print(f"Seřazený výstup metodou get_sorted(): {results.get_sorted()}")
 
 
+    # --- BONUSOVÝ ÚKOL ---
 
+    # První hledání - cache je prázdná, takže se vypíše "sorting_" a pole se seřadí
+    print(results.find_sorted(91))
+
+    # Druhé hledání - cache už je plná! "sorting_" se NEvypíše, hledá se okamžitě
+    print(results.find_sorted(50))
+
+    # Třetí hledání - opět se použije cache
+    print(results.find_sorted(77))
 
 
 if __name__ == "__main__":
